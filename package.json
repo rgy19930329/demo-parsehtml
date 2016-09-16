@@ -1,0 +1,12 @@
+{
+  "name": "demo-parsehtml",
+  "version": "0.0.0",
+  "description": "网页小说内容抓取",
+  "private": true,
+  "author": "rgy",
+  "devDependencies": {
+    "iconv-lite": "*",
+    "bufferhelper": "*",
+    "cheerio": "*"
+  }
+}
