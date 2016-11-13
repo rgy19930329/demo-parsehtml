@@ -1,3 +1,4 @@
+var os = require('os');
 var http = require('http');
 var iconv = require('iconv-lite');
 var BufferHelper = require('bufferhelper');
@@ -8,25 +9,7 @@ var cheerio = require('cheerio');
 var Program = {
     run: function() {
         this._init();
-        this.dateFormat();
-    },
-    // 格式化时间
-    dateFormat: function() {
-        Date.prototype.Format = function (fmt) { //author: meizz
-            var o = {
-                "M+": this.getMonth() + 1, //月份
-                "d+": this.getDate(), //日
-                "h+": this.getHours(), //小时
-                "m+": this.getMinutes(), //分
-                "s+": this.getSeconds(), //秒
-                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-                "S": this.getMilliseconds() //毫秒
-            };
-            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-            for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-            return fmt;
-        }
+        this._dateFormat();
     },
     // 小说下载完毕后执行
     callback: function() {
@@ -154,6 +137,24 @@ var Program = {
     _appendTxt: function(chapterName, txt) {
         fs.appendFileSync('/Users/rgy/Desktop/' + this._book + '.txt', txt);
     	console.log(chapterName + '   下载完毕……');
+    },
+    // 格式化时间
+    _dateFormat: function() {
+        Date.prototype.Format = function (fmt) { //author: meizz
+            var o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
     }
 };
 
