@@ -1,2 +1,28 @@
 # demo-parsehtml
-nodejs,网页小说内容自动抓取
+nodejs环境, 网页小说内容自动批量抓取
+
+### 小说网站
+http://www.boquge.com/
+
+## local
+本地运行
+
+#### 配置文件 config.xml
+> 配置bookid：书籍编号
+>
+> 配置start-chapter：指定开始导出章节
+
+#### 运行
+> 方法1：`node demo.js`
+>
+> 方法2：`./exec.sh` (mac)
+>
+> 方法3：双击exec.bat (windows)
+
+## server
+服务器运行，图形用户界面
+
+#### 运行
+> `npm start`
+>
+> 打开浏览器，输入 http://127.0.0.1:3000/
