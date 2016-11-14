@@ -11,6 +11,8 @@ http://www.boquge.com/
 > 配置bookid：书籍编号
 >
 > 配置start-chapter：指定开始导出章节
+>
+> 配置output-dir：指定导出目录
 
 #### 运行
 > 方法1：`node demo.js`
