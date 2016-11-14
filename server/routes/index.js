@@ -8,14 +8,18 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/book/:id', function(req, res, next) {
-  var sid = req.params.id;
+  var sid = req.params.id,
+  	  opts = {
+  	  	'bookId': sid,
+  	  	'startChapter': '第一一二章藏不住了'
+  	  };
   cnutil.catchnovel.callback = function() {
       res.render('book', {
           title: 'Express',
           bookId: sid
       });
   };
-  cnutil.catchnovel.run();
+  cnutil.catchnovel.run(opts);
 });
 
 module.exports = router;

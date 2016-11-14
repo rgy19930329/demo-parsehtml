@@ -1,3 +1,4 @@
+var path = require('path');
 var http = require('http');
 var iconv = require('iconv-lite');
 var BufferHelper = require('bufferhelper');
@@ -6,7 +7,8 @@ var fs = require('fs');
 var cheerio = require('cheerio');
 
 var Program = {
-    run: function() {
+    run: function(opts) {
+        this._setOpts(opts);
         this._init();
         this._dateFormat();
     },
@@ -14,20 +16,30 @@ var Program = {
     callback: function() {
         console.log('--------下载完成后执行的回调方法--------');
     },
+    // 设置下载参数
+    _setOpts: function(opts) {
+        if(typeof opts == 'object') {
+            this._bookId = opts.bookId;
+            this._startChapter = opts.startChapter;
+        }else{
+            console.error('下载参数错误！');
+        }
+    },
     // 下载配置项
     _option: {
         base: 'http://www.boquge.com',
         book: ''
     },
+    _bookId: null, // bookId
+    _startChapter: null, // 开始章节名
     _isOk: true, // 标志当前章节是否已下载成功
     _list: [], // 小说列表
-    _book: '', // 保存书籍名
-    _errorLog: '\r\n----------------------------\r\n', // 保存错误章节日志
+    _book: '', // 保存小说名
+    _errorLog: '\r\n----------------------------------------\r\n', // 保存错误章节日志
+    _outputDir: path.join(__dirname, '../data/'), // 小说输出路径
     _init: function() {
-        var config = fs.readFileSync('config.xml').toString();
-        var $ = cheerio.load(config);
-        var bookId = $('.book-id').html();
-        var startChapterName = $('.start-chapter').text();
+        var bookId = this._bookId,
+            startChapterName = this._startChapter;
 
         var option = this._option;
         option.book = '/book/'+ bookId + '/';
@@ -90,7 +102,7 @@ var Program = {
             }else{
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
-                    fs.appendFileSync('/Users/rgy/Desktop/' + _this._book + '.txt', _this._errorLog);
+                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
                     _this.callback && _this.callback();
                 }, 2000);
             }
@@ -134,7 +146,7 @@ var Program = {
     },
     // 将章节写入文件
     _appendTxt: function(chapterName, txt) {
-        fs.appendFileSync('/Users/rgy/Desktop/' + this._book + '.txt', txt);
+        fs.appendFileSync(this._outputDir + this._book + '.txt', txt);
     	console.log(chapterName + '   下载完毕……');
     },
     // 格式化时间
