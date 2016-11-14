@@ -2,6 +2,11 @@ doctype html
 html
   head
     title= title
+    script(src="/node_modules/jquery/dist/jquery.min.js")
+    script(src="/node_modules/bootstrap/dist/js/bootstrap.min.js")
+    link(rel='stylesheet', href='/node_modules/bootstrap/dist/css/bootstrap.min.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    block othersrc
   body
     block content
+    block script
