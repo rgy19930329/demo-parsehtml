@@ -14,6 +14,11 @@ http://www.boquge.com/
 >
 > 配置output-dir：指定导出目录
 
+#### 安装依赖
+> 1. `cd local`
+>
+> 2. `npm install`
+
 #### 运行
 > 方法1：`node demo.js`
 >
@@ -23,6 +28,11 @@ http://www.boquge.com/
 
 ## server
 服务器运行，图形用户界面
+
+#### 安装依赖
+> 1. `cd server`
+>
+> 2. `npm install`
 
 #### 运行
 > `npm start`
