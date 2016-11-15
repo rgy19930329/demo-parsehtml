@@ -33,8 +33,12 @@ http://www.boquge.com/
 > 1. `cd server`
 >
 > 2. `npm install`
+> 
+> 3. `cd public`
+>
+> 4. `npm install`
 
 #### 运行
-> `npm start`
+> 回到server目录，执行`npm start`
 >
 > 打开浏览器，输入 http://127.0.0.1:3000/
