@@ -1,0 +1,20 @@
+extends layout
+
+block srcbefore
+  script(src='/javascripts/socket.io.js')
+
+block content
+  h1= title
+  p Welcome to #{title}
+    span#num
+  hr
+  ul#msg
+  div
+    input#entry
+  div
+    button#send send
+
+
+block srcafter
+  script(src='/javascripts/index.js')
+
