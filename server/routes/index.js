@@ -9,29 +9,42 @@ router.get('/', function(req, res, next) {
 	});
 });
 
-router.get('/book/:id', function(req, res, next) {
-	var sid = req.params.id,
-		opts = {
-			'bookId': sid,
-			'startChapter': '第一一二章藏不住了'
-		};
-	cnutil.catchnovel.callback = function() {
-		res.render('book', {
-			title: 'Express',
-			bookId: sid
-		});
-	};
-	cnutil.catchnovel.run(opts);
+router.get('/book', function(req, res, next) {
+	res.render('book', {
+		title: 'Express'
+	});
 });
 
-var json = {
-    list: [
-        { book: '帝国时代', author: '小漂泊' },
-        { book: '龙渊', author: '南飞' }
-    ]
-};
-router.get('/books', function(req, res, next) {
-	res.send(json);
+// 小说抓取
+router.post('/catch', function(req, res, next) {
+	var bid = req.body.id,
+		start = req.body.start,
+		opts = {
+			bookId: bid,
+			startChapter: start
+		},
+		Program = cnutil.catchnovel;
+
+	Program.callback = function() {
+		var book = this.getBook() + '.txt',
+			url = '/download/' + encodeURIComponent(book);
+		res.send({
+			success: true,
+			data: {
+				book: book,
+				url: url
+			}
+		});
+	};
+	Program.run(opts);
+});
+
+// 小说下载
+router.get('/download/:book', function(req, res) {
+	var book = req.params.book;
+		book = decodeURIComponent(book);
+	var	path = './data/' + book;
+	res.download(path);
 });
 
 module.exports = router;

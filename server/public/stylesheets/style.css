@@ -1,8 +1,23 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+    color: #00B7FF;
+}
+a:hover {
+	color: #59f;
+}
+
+.tc {
+	text-align: center;
+}
+.w300 {width: 300px}
+
+.icon-loading {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+	background: url(../assets/loading.gif);
 }

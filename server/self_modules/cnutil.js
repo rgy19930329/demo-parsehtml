@@ -22,7 +22,7 @@ var Program = {
             this._bookId = opts.bookId;
             this._startChapter = opts.startChapter;
         }else{
-            console.error('下载参数错误！');
+            throw new Error('下载参数错误！');
         }
     },
     // 下载配置项
@@ -35,6 +35,9 @@ var Program = {
     _isOk: true, // 标志当前章节是否已下载成功
     _list: [], // 小说列表
     _book: '', // 保存小说名
+    getBook() { // 获取小说名
+        return this._book;
+    },
     _errorLog: '\r\n----------------------------------------\r\n', // 保存错误章节日志
     _outputDir: path.join(__dirname, '../data/'), // 小说输出路径
     _init: function() {
