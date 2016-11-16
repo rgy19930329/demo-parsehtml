@@ -5,11 +5,6 @@ var Program = cnutil.catchnovel;
 io.on('connection', function(socket) {
     console.log('a user connected');
 
-    socket.on('chat message', function(msg) {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
-    });
-
     socket.on('catch', function(opts) {
         var obj = {
             bookId: opts.id,
@@ -29,7 +24,12 @@ io.on('connection', function(socket) {
                 url: url
             });
         };
+        Program.reset();
         Program.run(obj);
+    });
+
+    socket.on('stop', function() {
+        Program.stop();
     });
 
 });

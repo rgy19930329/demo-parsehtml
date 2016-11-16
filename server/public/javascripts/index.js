@@ -62,10 +62,15 @@ var Page = {
 	_resetEvent: function() {
 		var _this = this;
 		this.$resetBtn.on('click', function() {
+			// --发出停止下载的指令-- //
+			socket.emit('stop');
+			// 
 			_this.$bookId.val('');
 			_this.$startChapter.val('');
 			_this.$progress.empty();
 			_this.$content.empty();
+			// --启用catch按钮-- //
+			_this.$catchBtn.removeClass('disabled');
 		});
 	},
 	// --生成进度条-- //

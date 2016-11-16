@@ -20,6 +20,17 @@ var Program = {
     snatchCallback: function(chapter, progress) {
         console.log('--------监听抓取过程回调方法--------');
     },
+    // 停止抓取
+    stop: function() {
+        this._makeStop = true;
+    },
+    // 重置
+    reset: function() {
+        this._makeStop = false;
+        this._isOk = true;
+        this._list = [];
+        this._chapterNum = 0;
+    },
     // 设置下载参数
     _setOpts: function(opts) {
         if(typeof opts == 'object') {
@@ -29,6 +40,8 @@ var Program = {
             throw new Error('下载参数错误！');
         }
     },
+    // 停止下载标志
+    _makeStop: false,
     // 下载配置项
     _option: {
         base: 'http://www.boquge.com',
@@ -110,6 +123,9 @@ var Program = {
             var chapter = list.shift();
             _this._snatchTxt(chapter.name, chapter.href);
             _this.snatchCallback && _this.snatchCallback(chapter.name, progress);
+            if(_this._makeStop) {
+                return;
+            }
             if(list.length > 0){
                 _this._excuteSnatchTxt();
             }else{
@@ -125,7 +141,7 @@ var Program = {
             // 不然其他代码段没办法执行
             setTimeout(function(){
                 _this._excuteSnatchTxt();
-            }, 300);
+            }, 50);
         }
     },
     // 抓取具体小说内容
