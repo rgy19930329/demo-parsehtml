@@ -43,29 +43,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-
-var num = 0;
-
-io.on('connection', function(socket){
-  console.log('a user connected');
-    
-  socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
-
-    io.emit('chat message', msg);
-  });
-
-});
-
-setInterval(function() {
-  num++;
-  io.emit('from', num);
-}, 2000);
-
-var server = http.listen(3000, function(){
-  console.log('listening on *:3000');
-});
 
 module.exports = app;
