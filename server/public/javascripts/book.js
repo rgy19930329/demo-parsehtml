@@ -13,14 +13,18 @@ var Page = {
             var bookId = $('#J-book-id').val(),
                 startChapter = $('#J-book-start').val();
             _this._showLoading();
+            _this.$submitBtn.addClass('disabled');
             $.ajax({
                 url: '/catch',
                 type: 'post',
                 data: { id: bookId, start: startChapter },
                 dataType: 'json',
                 success: function(res) {
+                    console.log(res);
                     if(res.success) {
-                        _this._success(res);
+                        _this._hideLoading();
+                        _this._showNovel(res);
+                        _this.$submitBtn.removeClass('disabled');
                     }
                 },
                 error: function(e) {
@@ -35,15 +39,11 @@ var Page = {
     _hideLoading: function() {
         this.$content.empty();
     },
+    // 显示小说信息
     _showNovel: function(res) {
         var book = res.data.book,
             url = res.data.url;
         this.$content.html('<div class="form-content"><a target="_blank" href=' + url + '>' + book + '</a></div>');
-    },
-    _success: function(res) {
-        this._hideLoading();
-        console.log(res);
-        this._showNovel(res);
     }
 };
 

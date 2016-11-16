@@ -1,8 +1,11 @@
 extends layout
 
+block othersrc
+  link(rel='stylesheet', href='/stylesheets/book.css')
+
 block content
   h1 Catch Novel Version 2.0
-  
+    a.glyphicon.glyphicon-retweet.icon-switch(href='/v1', title='切换版本')
 
 
 block script

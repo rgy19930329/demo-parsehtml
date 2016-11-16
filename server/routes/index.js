@@ -9,7 +9,13 @@ router.get('/', function(req, res, next) {
 	});
 });
 
-router.get('/book', function(req, res, next) {
+router.get('/v2', function(req, res, next) {
+	res.render('index', {
+		title: 'Express'
+	});
+});
+
+router.get('/v1', function(req, res, next) {
 	res.render('book', {
 		title: 'Express'
 	});
