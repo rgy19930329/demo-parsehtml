@@ -102,7 +102,7 @@ var Program = {
             // 不然其他代码段没办法执行
             setTimeout(function(){
                 _this._excuteSnatchTxt();
-            }, 300);
+            }, 50);
         }
     },
     // 抓取具体小说内容
