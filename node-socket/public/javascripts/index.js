@@ -4,6 +4,10 @@ $('#send').on('click', function() {
     $('#entry').val('');
 });
 
+$('#start').on('click', function() {
+	socket.emit('start');
+});
+
 socket.on('chat message', function(msg) {
     $('#msg').append($('<li>').text(msg));
 });
