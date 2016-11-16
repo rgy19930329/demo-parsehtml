@@ -1,10 +1,6 @@
 # demo-parsehtml
 nodejs环境, 网页小说内容自动批量抓取
 
-## tip
-> 新增node-socket，用来测试 nodejs + express + websocket(socket.io)
-
-
 ### 小说网站
 http://www.boquge.com/
 
