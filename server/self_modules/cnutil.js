@@ -16,6 +16,10 @@ var Program = {
     callback: function() {
         console.log('--------下载完成后执行的回调方法--------');
     },
+    // 章节抓取过程中执行（监听抓取过程）
+    snatchCallback: function(chapter, progress) {
+        console.log('--------监听抓取过程回调方法--------');
+    },
     // 设置下载参数
     _setOpts: function(opts) {
         if(typeof opts == 'object') {
@@ -34,6 +38,7 @@ var Program = {
     _startChapter: null, // 开始章节名
     _isOk: true, // 标志当前章节是否已下载成功
     _list: [], // 小说列表
+    _chapterNum: 0, // 需要抓取的总章节数
     _book: '', // 保存小说名
     getBook() { // 获取小说名
         return this._book;
@@ -82,6 +87,8 @@ var Program = {
                         list.push(chapter);
                     }
                 });
+                // 统计需要下载的总章节数
+                _this._chapterNum = list.length;
                 // 调用，让它按队列顺序执行，以免章节错乱
                 _this._excuteSnatchTxt();
             });
@@ -92,17 +99,21 @@ var Program = {
     },
     // 根据列表进行章节的顺序抓取
     _excuteSnatchTxt() {
-        var _this = this;
-        var list = _this._list;
+        var _this = this,
+            list = _this._list,
+            hasChapterNum = _this._chapterNum - list.length, // 已经下载的章节数
+            progress = parseInt(hasChapterNum * 100 / _this._chapterNum); // 当前下载进度
         console.log('执行-----' + list.length + '  isOk===' + _this._isOk);
 
         if(_this._isOk){
             _this._isOk = false;
             var chapter = list.shift();
             _this._snatchTxt(chapter.name, chapter.href);
+            _this.snatchCallback && _this.snatchCallback(chapter.name, progress);
             if(list.length > 0){
                 _this._excuteSnatchTxt();
             }else{
+                _this.snatchCallback && _this.snatchCallback(chapter.name, 100);
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
                     fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);

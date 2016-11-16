@@ -10,9 +10,8 @@ a:hover {
 	color: #59f;
 }
 
-.tc {
-	text-align: center;
-}
+.tc {text-align: center;}
+.ml10 {margin-left: 10px;}
 .w300 {width: 300px}
 
 .icon-loading {

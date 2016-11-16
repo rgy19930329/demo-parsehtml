@@ -1,12 +1,24 @@
 extends layout
 
 block othersrc
-  link(rel='stylesheet', href='/stylesheets/book.css')
+  script(src='/javascripts/socket.io.js')
+  link(rel='stylesheet', href='/stylesheets/index.css')
 
 block content
   h1 Catch Novel Version 2.0
     a.glyphicon.glyphicon-retweet.icon-switch(href='/v1', title='切换版本')
-
+  div#num
+  div.form-group
+    label bookId
+      input.form-control#J-book-id
+  div.form-group
+    label startChapter
+      input.w300.form-control#J-book-start
+  div.w300.form-group#J-progress
+  div.form-group#J-content
+  div.form-group
+    button.submit-btn.btn.btn-default#J-submit-btn catch
+    button.ml10.btn.btn-default#J-reset-btn reset
 
 block script
   script(src="/javascripts/index.js")

@@ -1,3 +1,8 @@
+.form-content {
+	width: 300px;
+	padding: 10px;
+	box-sizing: border-box;
+}
 .icon-switch {
 	color: #00B7FF;
 	font-size: 20px;
@@ -5,4 +10,7 @@
 }
 .icon-switch:hover {
 	text-decoration: none;
+}
+.progress {
+	height: 10px;
 }
