@@ -60,17 +60,24 @@ for (var i = 1; i <= 3; i++) {
 }
 
 
-function makePromise(name, delay) {
+function makePromise(name) {
   return new Promise((resolve) => {
     console.log(`${name} started`);
     setTimeout(() => {
       console.log(`${name} completed`);
       resolve(name);
-    }, delay);
+    }, 2000);
   });
 }
 
-var data = [2000, 200, 2000];
+// var data = ['first', 'second', 'third'];
+
+var data = [
+  { 'name': 'first', 'age': 21 },
+  { 'name': 'second', 'age': 22 },
+  { 'name': 'third', 'age': 22 }  
+];
+
 
 // Promise.reduce(data, (total, item, index) => {
 //   return makePromise(index, item).then(res => {
@@ -90,7 +97,7 @@ var data = [2000, 200, 2000];
 //     console.log(res);
 // });
 
-Promise.mapSeries(data, (item, index) => makePromise(index, item))
+Promise.mapSeries(data, (item, index) => makePromise(item.name))
 .then(res => {
   console.log(res);
 });

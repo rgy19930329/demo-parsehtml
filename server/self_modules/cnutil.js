@@ -2,6 +2,7 @@ var path = require('path');
 var http = require('http');
 var iconv = require('iconv-lite');
 var BufferHelper = require('bufferhelper');
+var Promise = require('bluebird');
 var fs = require('fs');
 //引用cheerio模块,使在服务器端像在客户端上操作DOM,不用正则表达式
 var cheerio = require('cheerio');
@@ -100,79 +101,59 @@ var Program = {
                         list.push(chapter);
                     }
                 });
-                // 统计需要下载的总章节数
-                _this._chapterNum = list.length;
                 // 调用，让它按队列顺序执行，以免章节错乱
-                _this._excuteSnatchTxt();
-            });
-        }).on('error', function(e) {
-            console.log(e.message);
-        });
-        req.end();
-    },
-    // 根据列表进行章节的顺序抓取
-    _excuteSnatchTxt() {
-        var _this = this,
-            list = _this._list,
-            hasChapterNum = _this._chapterNum - list.length, // 已经下载的章节数
-            progress = parseInt(hasChapterNum * 100 / _this._chapterNum); // 当前下载进度
-        console.log('执行-----' + list.length + '  isOk===' + _this._isOk);
-
-        if(_this._isOk){
-            _this._isOk = false;
-            var chapter = list.shift();
-            _this._snatchTxt(chapter.name, chapter.href);
-            _this.snatchCallback && _this.snatchCallback(chapter.name, progress);
-            if(_this._makeStop) {
-                return;
-            }
-            if(list.length > 0){
-                _this._excuteSnatchTxt();
-            }else{
-                _this.snatchCallback && _this.snatchCallback(chapter.name, 100);
-                setTimeout(function() {
+                Promise.mapSeries(list, (item, index) => _this._snatchTxt(item.name, item.href, index))
+                .then(res => {
                     console.log(_this._book + ' 下载完毕！');
+                    _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
                     fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
                     _this.callback && _this.callback();
-                }, 2000);
-            }
-        }else{
-            // 使用setTimeout是为了让它出让cpu，不能让它一直占用着，
-            // 不然其他代码段没办法执行
-            setTimeout(function(){
-                _this._excuteSnatchTxt();
-            }, 50);
-        }
-    },
-    // 抓取具体小说内容
-    _snatchTxt: function(chapterName, bookUrl) {
-        var _this = this;
-        var url = _this._option.base + bookUrl;
-        var req = http.request(url, function(res) {
-            //解决中文编码问题
-            var bufferHelper = new BufferHelper();
-            res.on('data', function(chunk) {
-                bufferHelper.concat(chunk);
-            });
-            res.on('end', function() {
-                //注意，此编码必须与抓取页面的编码一致，否则会出现乱码，也可以动态去识别
-                var val = iconv.decode(bufferHelper.toBuffer(), 'gbk');
-                var $ = cheerio.load(val);
-                var text = $('#txtContent').text();
-                if(text.length > 200){
-                    text = chapterName + '\r\n' + text;
-                    _this._appendTxt(chapterName, text);
-                }else{
-                    text = chapterName + '\r\n' + text;
-                    _this._errorLog += text;
-                }
-                // 重置标志
-                _this._isOk = true;
+                });
             });
         }).on('error', function(e) {
             console.log(e.message);
         });
         req.end();
+    },
+    // 抓取具体小说内容
+    _snatchTxt: function(chapterName, bookUrl, index) {
+        var _this = this,
+            progress = parseInt(index * 100 / _this._list.length); // 当前下载进度
+        _this.snatchCallback && _this.snatchCallback(chapterName, progress);
+
+        var url = _this._option.base + bookUrl;
+        return new Promise(function(resolve, reject) {
+            var req = http.request(url, function(res) {
+                //解决中文编码问题 
+                var bufferHelper = new BufferHelper();
+                res.on('data', function(chunk) {
+                    bufferHelper.concat(chunk);
+                });
+                res.on('end', function() {
+                    //注意，此编码必须与抓取页面的编码一致，否则会出现乱码，也可以动态去识别
+                    var val = iconv.decode(bufferHelper.toBuffer(), 'gbk');
+                    var $ = cheerio.load(val);
+                    var text = $('#txtContent').text();
+                    if(text.length > 200){
+                        text = chapterName + '\r\n' + text;
+                        _this._appendTxt(chapterName, text);
+                    }else{
+                        text = chapterName + '\r\n' + text;
+                        _this._errorLog += text;
+                    }
+                    // 重置标志
+                    _this._isOk = true;
+                    // 
+                    resolve(chapterName);
+                });
+                res.on('error', function(e) {
+                    reject(e.message);
+                });
+            }).on('error', function(e) {
+                reject(e.message);
+            });
+            req.end();
+        });
     },
     // 将章节写入文件
     _appendTxt: function(chapterName, txt) {

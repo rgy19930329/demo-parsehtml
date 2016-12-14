@@ -72,43 +72,23 @@ var Program = {
                     }
                 });
                 // 调用，让它按队列顺序执行，以免章节错乱
-                _this._excuteSnatchTxt();
+                Promise.mapSeries(list, (item, index) => _this._snatchTxt(item.name, item.href, index))
+                .then(res => {
+                    console.log(_this._book + ' 下载完毕！');
+                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
+                    _this.callback && _this.callback();
+                });
             });
         }).on('error', function(e) {
             console.log(e.message);
         });
         req.end();
     },
-    // 根据列表进行章节的顺序抓取
-    _excuteSnatchTxt() {
-        var _this = this;
-        var list = _this._list;
-        console.log('执行-----' + list.length + '  isOk===' + _this._isOk);
-
-        if(_this._isOk){
-            _this._isOk = false;
-            var chapter = list.shift();
-            _this._snatchTxt(chapter.name, chapter.href);
-            if(list.length > 0){
-                _this._excuteSnatchTxt();
-            }else{
-                setTimeout(function() {
-                    console.log(_this._book + ' 下载完毕！');
-                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
-                    _this.callback && _this.callback();
-                }, 2000);
-            }
-        }else{
-            // 使用setTimeout是为了让它出让cpu，不能让它一直占用着，
-            // 不然其他代码段没办法执行
-            setTimeout(function(){
-                _this._excuteSnatchTxt();
-            }, 50);
-        }
-    },
     // 抓取具体小说内容
-    _snatchTxt: function(chapterName, bookUrl) {
+    _snatchTxt: function(chapterName, bookUrl, index) {
         var _this = this;
+        var restChapterNum = _this._list.length - index;
+        console.log('还剩 ' + restChapterNum + ' 章');
         var url = _this._option.base + bookUrl;
         return new Promise(function(resolve, reject) {
             var req = http.request(url, function(res) {
@@ -131,6 +111,8 @@ var Program = {
                     }
                     // 重置标志
                     _this._isOk = true;
+                    // 
+                    resolve(chapterName);
                 });
                 res.on('error', function(e) {
                     reject(e.message);
@@ -140,7 +122,6 @@ var Program = {
                 reject(e.message);
             });
             req.end();
-
         });
     },
     // 将章节写入文件

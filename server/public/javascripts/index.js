@@ -34,6 +34,7 @@ var Page = {
 		   	_this._showProgress();
 			// --禁用catch按钮-- //
 			$(this).addClass('disabled');
+			$(this).prop('disabled', true);
 		});
 	},
 	// 监听抓取过程的事件
@@ -71,6 +72,7 @@ var Page = {
 			_this.$content.empty();
 			// --启用catch按钮-- //
 			_this.$catchBtn.removeClass('disabled');
+			_this.$catchBtn.prop('disabled', false);
 		});
 	},
 	// --生成进度条-- //
