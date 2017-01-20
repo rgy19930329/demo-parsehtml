@@ -26,10 +26,14 @@ var Program = {
     },
     // 重置
     reset: function() {
+        this._bookId = null;
+        this._startChapter = null;
         this._makeStop = false;
         this._isOk = true;
         this._list = [];
         this._chapterNum = 0;
+        this._book = '';
+        this._errorLog = '\r\n----------------------------------------\r\n';
     },
     // 设置下载参数
     _setOpts: function(opts) {
@@ -116,13 +120,13 @@ var Program = {
             list = _this._list,
             hasChapterNum = _this._chapterNum - list.length, // 已经下载的章节数
             progress = parseInt(hasChapterNum * 100 / _this._chapterNum); // 当前下载进度
-        console.log('执行-----' + list.length + '  isOk===' + _this._isOk);
 
         if(_this._isOk){
             _this._isOk = false;
             var chapter = list.shift();
             _this._snatchTxt(chapter.name, chapter.href);
             _this.snatchCallback && _this.snatchCallback(chapter.name, progress);
+            console.log('执行-----' + list.length);
             if(_this._makeStop) {
                 return;
             }
@@ -132,6 +136,8 @@ var Program = {
                 _this.snatchCallback && _this.snatchCallback(chapter.name, 100);
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
+                    console.log('---------------------------------------------------------');
+                    // console.log(_this._errorLog);
                     fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
                     _this.callback && _this.callback();
                 }, 2000);
@@ -141,7 +147,7 @@ var Program = {
             // 不然其他代码段没办法执行
             setTimeout(function(){
                 _this._excuteSnatchTxt();
-            }, 50);
+            }, 300);
         }
     },
     // 抓取具体小说内容
@@ -163,7 +169,8 @@ var Program = {
                     text = chapterName + '\r\n' + text;
                     _this._appendTxt(chapterName, text);
                 }else{
-                    text = chapterName + '\r\n' + text;
+                    text = chapterName + ' 【下载失败】\r\n' + text;
+                    console.log(chapterName + ' 下载失败')
                     _this._errorLog += text;
                 }
                 // 重置标志

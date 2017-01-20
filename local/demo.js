@@ -25,6 +25,8 @@ var Program = {
     _book: '', // 保存书籍名
     _errorLog: '\r\n------------------------------------------\r\n', // 保存错误章节日志
     _outputDir: '', // 小说导出路径
+    _curChapterName: '', // 当前章节名
+    _curChapterUrl: '', // 当前章节名
     _init: function() {
         var config = fs.readFileSync('config.xml').toString();
         var $ = cheerio.load(config);
@@ -84,10 +86,24 @@ var Program = {
         var list = _this._list;
         console.log('执行-----' + list.length + '  isOk===' + _this._isOk);
 
-        if(_this._isOk){
+        if(_this._isOk == true){
             _this._isOk = false;
             var chapter = list.shift();
             _this._snatchTxt(chapter.name, chapter.href);
+            if(list.length > 0){
+                _this._excuteSnatchTxt();
+            }else{
+                setTimeout(function() {
+                    console.log(_this._book + ' 下载完毕！');
+                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
+                    _this.callback && _this.callback();
+                }, 2000);
+            }
+        }else if(_this._isOk == 'textIsNull') {
+            console.log('---------重新抓取---------');
+            _this._isOk = false;
+            _this._snatchTxt(_this._curChapterName, _this._curChapterUrl);
+
             if(list.length > 0){
                 _this._excuteSnatchTxt();
             }else{
@@ -102,7 +118,7 @@ var Program = {
             // 不然其他代码段没办法执行
             setTimeout(function(){
                 _this._excuteSnatchTxt();
-            }, 50);
+            }, 300);
         }
     },
     // 抓取具体小说内容
@@ -123,16 +139,31 @@ var Program = {
                 if(text.length > 200){
                     text = chapterName + '\r\n' + text;
                     _this._appendTxt(chapterName, text);
-                }else{
+                    // 重置标志
+                    _this._isOk = true;
+                }else if(text.length > 0){
+                    console.log('废话章节');
                     text = chapterName + '\r\n' + text;
                     _this._errorLog += text;
+                    // 重置标志
+                    _this._isOk = true;
+                }else{
+                    console.log('text为空');
+                    _this._isOk = 'textIsNull';
+                    _this._curChapterName = chapterName;
+                    _this._curChapterUrl = bookUrl;
                 }
                 // 重置标志
-                _this._isOk = true;
+                // _this._isOk = true;
+            });
+            res.on('error', function(e) {
+                console.log('请求异常', e);
+                _this._isOk = 'textIsNull';
             });
         }).on('error', function(e) {
             console.log(e.message);
         });
+
         req.end();
     },
     // 将章节写入文件
