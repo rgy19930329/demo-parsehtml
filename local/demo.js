@@ -52,7 +52,7 @@ var Program = {
                 //注意，此编码必须与抓取页面的编码一致，否则会出现乱码，也可以动态去识别
                 var val = iconv.decode(bufferHelper.toBuffer(), 'gbk');
                 var $ = cheerio.load(val);
-                var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format("yyyy-MM-dd");
+                var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format("yyyy-MM-dd") + '-' + Date.now();
                 _this._book = book;
                 var $links = $('#chapters-list').find('a');
 
@@ -142,13 +142,13 @@ var Program = {
                     // 重置标志
                     _this._isOk = true;
                 }else if(text.length > 0){
-                    console.log('废话章节');
+                    console.log('----------废话章节---------');
                     text = chapterName + '\r\n' + text;
                     _this._errorLog += text;
                     // 重置标志
                     _this._isOk = true;
                 }else{
-                    console.log('text为空');
+                    console.log('----------text为空----------');
                     _this._isOk = 'textIsNull';
                     _this._curChapterName = chapterName;
                     _this._curChapterUrl = bookUrl;
@@ -157,7 +157,7 @@ var Program = {
                 // _this._isOk = true;
             });
             res.on('error', function(e) {
-                console.log('请求异常', e);
+                console.log('响应异常', e);
                 _this._isOk = 'textIsNull';
             });
         }).on('error', function(e) {

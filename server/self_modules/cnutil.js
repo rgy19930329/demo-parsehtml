@@ -34,6 +34,8 @@ var Program = {
         this._chapterNum = 0;
         this._book = '';
         this._errorLog = '\r\n----------------------------------------\r\n';
+        this._curChapterName = '';
+        this._curChapterUrl = '';
     },
     // 设置下载参数
     _setOpts: function(opts) {
@@ -57,6 +59,9 @@ var Program = {
     _list: [], // 小说列表
     _chapterNum: 0, // 需要抓取的总章节数
     _book: '', // 保存小说名
+    _curChapterName: '', // 当前章节名
+    _curChapterUrl: '', // 当前章节url
+    _curProgress: 0, // 当前进度
     getBook() { // 获取小说名
         return this._book;
     },
@@ -84,7 +89,7 @@ var Program = {
                 //注意，此编码必须与抓取页面的编码一致，否则会出现乱码，也可以动态去识别
                 var val = iconv.decode(bufferHelper.toBuffer(), 'gbk');
                 var $ = cheerio.load(val);
-                var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format("yyyy-MM-dd");
+                var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format("yyyy-MM-dd") + '-' + Date.now();
                 _this._book = book;
                 var $links = $('#chapters-list').find('a');
 
@@ -116,28 +121,42 @@ var Program = {
     },
     // 根据列表进行章节的顺序抓取
     _excuteSnatchTxt() {
-        var _this = this,
-            list = _this._list,
-            hasChapterNum = _this._chapterNum - list.length, // 已经下载的章节数
-            progress = parseInt(hasChapterNum * 100 / _this._chapterNum); // 当前下载进度
+        var _this = this;
+        var list = _this._list;
+        console.log('执行-----' + list.length + '  isOk===' + _this._isOk);
 
-        if(_this._isOk){
+        if(_this._isOk == true){
             _this._isOk = false;
-            var chapter = list.shift();
-            _this._snatchTxt(chapter.name, chapter.href);
-            _this.snatchCallback && _this.snatchCallback(chapter.name, progress);
-            console.log('执行-----' + list.length);
-            if(_this._makeStop) {
-                return;
-            }
+            
             if(list.length > 0){
+                var chapter = list.shift(),
+                    progress = parseInt(list.length * 100 / _this._chapterNum);
+                _this._snatchTxt(chapter.name, chapter.href, progress);
+
                 _this._excuteSnatchTxt();
             }else{
-                _this.snatchCallback && _this.snatchCallback(chapter.name, 100);
+                _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
-                    console.log('---------------------------------------------------------');
-                    // console.log(_this._errorLog);
+                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
+                    _this.callback && _this.callback();
+                }, 2000);
+            }
+        }else if(_this._isOk == 'textIsNull') {
+            console.log('---------重新抓取---------');
+            _this._isOk = false;
+            _this._snatchTxt(_this._curChapterName, _this._curChapterUrl);
+
+            if(list.length > 0){
+                var chapter = list.shift(),
+                    progress = parseInt(list.length * 100 / _this._chapterNum);
+                _this._snatchTxt(chapter.name, chapter.href, progress);
+
+                _this._excuteSnatchTxt();
+            }else{
+                _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
+                setTimeout(function() {
+                    console.log(_this._book + ' 下载完毕！');
                     fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
                     _this.callback && _this.callback();
                 }, 2000);
@@ -151,8 +170,10 @@ var Program = {
         }
     },
     // 抓取具体小说内容
-    _snatchTxt: function(chapterName, bookUrl) {
+    _snatchTxt: function(chapterName, bookUrl, progress) {
         var _this = this;
+        _this.snatchCallback && _this.snatchCallback(chapterName, progress);
+
         var url = _this._option.base + bookUrl;
         var req = http.request(url, function(res) {
             //解决中文编码问题
@@ -168,13 +189,27 @@ var Program = {
                 if(text.length > 200){
                     text = chapterName + '\r\n' + text;
                     _this._appendTxt(chapterName, text);
-                }else{
-                    text = chapterName + ' 【下载失败】\r\n' + text;
-                    console.log(chapterName + ' 下载失败')
+                    // 重置标志
+                    _this._isOk = true;
+                }else if(text.length > 0){
+                    console.log('----------废话章节 【' + chapterName + '】 跳过-------------');
+                    text = chapterName + '\r\n' + text;
                     _this._errorLog += text;
+                    // 重置标志
+                    _this._isOk = true;
+                }else{
+                    console.log('----------text为空 【' + chapterName + '】 再来一次----------');
+                    _this._isOk = 'textIsNull';
+                    _this._curChapterName = chapterName;
+                    _this._curChapterUrl = bookUrl;
+                    _this._curProgress = progress;
                 }
                 // 重置标志
-                _this._isOk = true;
+                // _this._isOk = true;
+            });
+            res.on('error', function(e) {
+                console.log('响应异常', e);
+                _this._isOk = 'textIsNull';
             });
         }).on('error', function(e) {
             console.log(e.message);
