@@ -127,12 +127,11 @@ var Program = {
 
         if(_this._isOk == true){
             _this._isOk = false;
-            
-            if(list.length > 0){
-                var chapter = list.shift(),
-                    progress = parseInt(list.length * 100 / _this._chapterNum);
-                _this._snatchTxt(chapter.name, chapter.href, progress);
+            var chapter = list.shift(),
+                progress = parseInt((_this._chapterNum - list.length) * 100 / _this._chapterNum);
 
+            _this._snatchTxt(chapter.name, chapter.href, progress);
+            if(list.length > 0){
                 _this._excuteSnatchTxt();
             }else{
                 _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
@@ -149,7 +148,7 @@ var Program = {
 
             if(list.length > 0){
                 var chapter = list.shift(),
-                    progress = parseInt(list.length * 100 / _this._chapterNum);
+                    progress = parseInt((_this._chapterNum - list.length) * 100 / _this._chapterNum);
                 _this._snatchTxt(chapter.name, chapter.href, progress);
 
                 _this._excuteSnatchTxt();
