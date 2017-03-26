@@ -173,7 +173,7 @@ var Program = {
                 var text = $('#txtContent').text();
                 if(text.length > 200){
                     text = chapterName + '\r\n' + text;
-                    _this._appendTxt(chapterName, text);
+                    _this._appendTxt(text);
                     console.log(chapterName + '   下载完毕……');
                     // 重置标志
                     _this._isOk = true;
