@@ -1,1 +1,1 @@
-node demo.js
+node cnutil.js

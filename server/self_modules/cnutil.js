@@ -2,6 +2,7 @@ var path = require('path');
 var http = require('http');
 var iconv = require('iconv-lite');
 var BufferHelper = require('bufferhelper');
+var Promise = require('bluebird');
 var fs = require('fs');
 //引用cheerio模块,使在服务器端像在客户端上操作DOM,不用正则表达式
 var cheerio = require('cheerio');
@@ -109,10 +110,14 @@ var Program = {
                         list.push(chapter);
                     }
                 });
-                // 统计需要下载的总章节数
-                _this._chapterNum = list.length;
                 // 调用，让它按队列顺序执行，以免章节错乱
-                _this._excuteSnatchTxt();
+                Promise.mapSeries(list, (item, index) => _this._snatchTxt(item.name, item.href, index))
+                .then(res => {
+                    console.log(_this._book + ' 下载完毕！');
+                    _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
+                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
+                    _this.callback && _this.callback();
+                });
             });
         }).on('error', function(e) {
             console.log(e.message);
@@ -210,10 +215,8 @@ var Program = {
                 console.log('响应异常', e);
                 _this._isOk = 'textIsNull';
             });
-        }).on('error', function(e) {
-            console.log(e.message);
+            req.end();
         });
-        req.end();
     },
     // 将章节写入文件
     _appendTxt: function(chapterName, txt) {
