@@ -142,7 +142,7 @@ var Program = {
                 _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
-                    _appendTxt(_this._errorLog);
+                    _this._appendTxt(_this._errorLog);
                     _this.callback && _this.callback();
                 }, 2000);
             }
