@@ -34,8 +34,6 @@ var Program = {
         this._chapterNum = 0;
         this._book = '';
         this._errorLog = '\r\n----------------------------------------\r\n';
-        this._curChapterName = '';
-        this._curChapterUrl = '';
     },
     // 设置下载参数
     _setOpts: function(opts) {
@@ -59,10 +57,7 @@ var Program = {
     _list: [], // 小说列表
     _chapterNum: 0, // 需要抓取的总章节数
     _book: '', // 保存小说名
-    _curChapterName: '', // 当前章节名
-    _curChapterUrl: '', // 当前章节url
-    _curProgress: 0, // 当前进度
-    getBook() { // 获取小说名
+    getBook: function() { // 获取小说名
         return this._book;
     },
     _errorLog: '\r\n----------------------------------------\r\n', // 保存错误章节日志
@@ -114,8 +109,6 @@ var Program = {
                 // 调用，让它按队列顺序执行，以免章节错乱
                 _this._excuteSnatchTxt();
             });
-        }).on('error', function(e) {
-            console.log(e.message);
         });
         req.end();
     },
@@ -137,25 +130,7 @@ var Program = {
                 _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
-                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
-                    _this.callback && _this.callback();
-                }, 2000);
-            }
-        }else if(_this._isOk == 'textIsNull') {
-            console.log('---------重新抓取---------');
-            _this._isOk = false;
-            _this._snatchTxt(_this._curChapterName, _this._curChapterUrl);
-
-            if(list.length > 0){
-                var chapter = list.shift(),
-                    progress = parseInt((_this._chapterNum - list.length) * 100 / _this._chapterNum);
-                _this._snatchTxt(chapter.name, chapter.href, progress);
-
-                _this._excuteSnatchTxt();
-            }else{
-                _this.snatchCallback && _this.snatchCallback('下载完毕', 100);
-                setTimeout(function() {
-                    console.log(_this._book + ' 下载完毕！');
+                    _this._appendTxt(_this._errorLog);
                     fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
                     _this.callback && _this.callback();
                 }, 2000);
@@ -187,7 +162,8 @@ var Program = {
                 var text = $('#txtContent').text();
                 if(text.length > 200){
                     text = chapterName + '\r\n' + text;
-                    _this._appendTxt(chapterName, text);
+                    _this._appendTxt(text);
+                    console.log(chapterName + '   下载完毕……');
                     // 重置标志
                     _this._isOk = true;
                 }else if(text.length > 0){
@@ -198,27 +174,18 @@ var Program = {
                     _this._isOk = true;
                 }else{
                     console.log('----------text为空 【' + chapterName + '】 再来一次----------');
-                    _this._isOk = 'textIsNull';
-                    _this._curChapterName = chapterName;
-                    _this._curChapterUrl = bookUrl;
-                    _this._curProgress = progress;
+                    _this._snatchTxt(chapterName, bookUrl, progress);
                 }
-                // 重置标志
-                // _this._isOk = true;
             });
             res.on('error', function(e) {
                 console.log('响应异常', e);
-                _this._isOk = 'textIsNull';
             });
-        }).on('error', function(e) {
-            console.log(e.message);
         });
         req.end();
     },
     // 将章节写入文件
-    _appendTxt: function(chapterName, txt) {
+    _appendTxt: function(txt) {
         fs.appendFileSync(this._outputDir + this._book + '.txt', txt);
-        console.log(chapterName + '   下载完毕……');
     },
     // 格式化时间
     _dateFormat: function() {
