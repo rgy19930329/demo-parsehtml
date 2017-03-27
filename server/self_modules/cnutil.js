@@ -131,7 +131,6 @@ var Program = {
                 setTimeout(function() {
                     console.log(_this._book + ' 下载完毕！');
                     _this._appendTxt(_this._errorLog);
-                    fs.appendFileSync(_this._outputDir + _this._book + '.txt', _this._errorLog);
                     _this.callback && _this.callback();
                 }, 2000);
             }
