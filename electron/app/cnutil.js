@@ -91,7 +91,7 @@ var Program = {
         //注意，此编码必须与抓取页面的编码一致，否则会出现乱码，也可以动态去识别
         var val = iconv.decode(bufferHelper.toBuffer(), 'gbk');
         var $ = cheerio.load(val);
-        var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format('yyyy-MM-dd hh:mm:ss');
+        var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format('yyyy-MM-dd hh-mm-ss');
         _this._book = book;
         var $links = $('#chapters-list').find('a');
 
