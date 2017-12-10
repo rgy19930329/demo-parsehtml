@@ -1,0 +1,105 @@
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 0 30px;
+  background: #fff;
+}
+h2 {
+  text-align: center;
+  color: #f60;
+  font-size: 24px;
+  font-weight: bold;
+}
+a {
+  text-decoration: none !important;
+}
+ul {
+  padding: 0;
+  margin: 0;
+}
+ul li {
+  list-style: none;
+}
+.btn {
+  width: 100px;
+}
+.link-area {
+  text-align: center;
+  border: 1px dashed #ccc;
+  margin: 20px 0 0;
+}
+.link-area a {
+  display: block;
+  line-height: 36px;
+  transition: all .3s;
+}
+.link-area a:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+.form-area {
+  text-align: center;
+}
+.form-area .row {
+  margin-bottom: 20px;
+}
+.form-area .input-text {
+  width: 400px;
+  display: inline-block;
+}
+.form-area .logs-title {
+  margin-bottom: 10px;
+}
+.form-area .logs-area {
+  height: 200px;
+  font-size: 12px;
+  resize: none;
+}
+.form-area .progress {
+  width: 400px;
+  display: inline-block;
+}
+.form-area .history-wrap {
+  position: relative;
+  display: inline-block;
+  width: 400px;
+}
+.form-area .history-wrap .history-area {
+  position: absolute;
+  top: 45px;
+  display: block;
+  z-index: -1;
+  opacity: 0;
+  transition: all .3s;
+}
+.form-area .history-wrap .history-area.show {
+  display: block;
+  top: 35px;
+  opacity: 1;
+  z-index: 0;
+}
+.form-area .history-wrap .history-area ul {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  box-shadow: 0 0 10px #ddd;
+  width: 400px;
+  line-height: 30px;
+  background: #fff;
+}
+.form-area .history-wrap .history-area li {
+  display: flex;
+  text-align: left;
+  box-sizing: border-box;
+  padding: 0 10px;
+  transition: all .3s;
+}
+.form-area .history-wrap .history-area li:hover {
+  background: #eee;
+}
+.form-area .history-wrap .history-area li .col-1 {
+  flex: 3;
+}
+.form-area .history-wrap .history-area li .col-2 {
+  flex: 2;
+}
+.form-area .history-wrap .history-area li .col-3 {
+  width: 30px;
+}

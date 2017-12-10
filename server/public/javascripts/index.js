@@ -80,10 +80,10 @@ var Page = {
 		this.$progress.html(
 			'<div class="progress progress-striped">' +
 				'<div class="progress-bar progress-bar-info" role="progressbar"' +
-			         'aria-valuemin="0" aria-valuemax="100"' +
-			         'style="width: 0%;" id="J-progress-inner">' +
-			         '<span class="sr-only"></span>' +
-			    '</div>' +
+          'aria-valuemin="0" aria-valuemax="100"' +
+          'style="width: 0%;" id="J-progress-inner">' +
+          '<span class="sr-only"></span>' +
+		    '</div>' +
 			'</div>'
 		);
 	}

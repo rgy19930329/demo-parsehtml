@@ -1,0 +1,24 @@
+{
+  "name": "noval-catch-electron",
+  "version": "1.0.0",
+  "description": "electron application of novel catch",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "gulp watch:electron"
+  },
+  "author": "ranguangyu",
+  "devDependencies": {
+    "electron": "1.7.9",
+    "electron-connect": "0.6.2",
+    "gulp": "3.9.1",
+    "gulp-less": "3.3.2"
+  },
+  "dependencies": {
+    "jquery": "3.2.1",
+    "bootstrap": "3.3.7",
+    "iconv-lite": "0.4.13",
+    "bufferhelper": "0.2.1",
+    "cheerio": "0.22.0"
+  }
+}

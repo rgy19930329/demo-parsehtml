@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>扒书神器</title>
+    <script>
+      window.$ = window.jQuery = require('jquery');
+    </script>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <h2>扒书神器</h2>
+
+    <div class="link-area">
+      <!-- <a href="http://www.boquge.com/" target="_blank"></a> -->
+      <a href="javascript:;" data-href="http://www.boquge.com/" id="linkto">http://www.boquge.com/</a>
+    </div>
+
+    <div class="form-group form-area">
+      <div class="row msgtips">
+        
+      </div>
+      <div class="row history-wrap">
+        <input type="text" class="form-control input-text book-id-input" id="bookId" placeholder="书号">
+        <div class="history-area" id="history">
+          <ul>
+            
+          </ul>
+        </div>
+      </div>
+      <div class="row">
+        <input type="text" class="form-control input-text" id="startChapter" placeholder="开始章节名">
+      </div>
+      <div class="row" id="progress">
+        
+      </div>
+      <div class="row handler">
+        <a href="javascript:;" id="catch" class="btn btn-success">抓取</a>
+        <a href="javascript:;" id="reset" class="btn btn-default">重置</a>
+        <a href="javascript:;" id="stop" class="btn btn-danger">停止</a>
+      </div>
+      <div class="row logs">
+        <div class="logs-title">
+          <a href="javascript:;" class="glyphicon glyphicon-eye-open" id="logs-eye"></a>
+        </div>
+        <div>
+          <textarea class="form-control logs-area" readonly="readonly" id="logs-area"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      require('./index.js');
+    </script>
+  </body>
+</html>
