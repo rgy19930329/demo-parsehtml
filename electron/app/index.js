@@ -25,9 +25,10 @@ var Page = {
       this.init();
     },
     init() {
-      this.ncatch();
       this.linkto();
+      this.ncatch();
       this.nreset();
+      this.nstop();
       this.logshow();
       this.historyshow();
     },
@@ -62,9 +63,15 @@ var Page = {
           });
         }
 
-        Program.callback = function(bookName) {
+        Program.callback = function(bookName, bookInfo) {
           var curPath = path.join(__dirname, '../data', `/${bookName}`);
           $('#chapter').html(`<a href="file://${curPath}" download="${bookName}">${bookName}</a>`);
+          // history
+          fileutil.update(bookInfo.bookId, {
+            bookName: bookInfo.bookName,
+            endChapter: bookInfo.endChapter,
+            time: bookInfo.time
+          });
         }
 
         Program.run({
@@ -75,9 +82,15 @@ var Page = {
     },
     nreset() {
       $('#reset').on('click', function() {
-        $('#bookId').val('');
-        $('#startChapter').val('');
-        $('#logs-area').val('');
+        // $('#bookId').val('');
+        // $('#startChapter').val('');
+        // $('#logs-area').val('');
+        window.location.reload();
+      });
+    },
+    nstop() {
+      $('#stop').on('click', function() {
+        Program.stop();
       });
     },
     logshow() {
@@ -136,7 +149,7 @@ var Page = {
         if (!historyData[bookId].isFinished) {
           str += `<li data-book="${bookId}" data-bookinfo="${encodeURIComponent(JSON.stringify(historyData[bookId]))}">
               <span class="col-1">${historyData[bookId].bookName}</span>
-              <span class="col-2">${new Date(parseInt(historyData[bookId].time)).Format('yyyy-MM-dd hh:mm:ss')}</span>
+              <span class="col-2">${new Date(parseInt(historyData[bookId].time)).Format('yyyy-MM-dd')}</span>
               <span class="col-3"><a href="javascript:;">完成</a></span>
              </li>`;
         }

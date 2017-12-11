@@ -64,6 +64,12 @@ var Program = {
   _list: [], // 小说列表
   _chapterNum: 0, // 需要抓取的总章节数
   _book: '', // 保存小说名
+  _bookInfo: { // 用来做下载信息存储
+    bookId: 0, // 书号
+    bookName: '', // 书名
+    endChapter: '', // 上次下载的最后一章章节名
+    time: 0 // 下载时间戳
+  },
   getBook: function() { // 获取小说名
     return this._book;
   },
@@ -73,6 +79,7 @@ var Program = {
     var bookId = this._bookId,
       startChapterName = this._startChapter;
 
+    this._bookInfo.bookId = bookId;
     var option = this._option;
     option.book = '/book/' + bookId + '/';
     var bookListUrl = option.base + option.book;
@@ -91,8 +98,12 @@ var Program = {
         //注意，此编码必须与抓取页面的编码一致，否则会出现乱码，也可以动态去识别
         var val = iconv.decode(bufferHelper.toBuffer(), 'gbk');
         var $ = cheerio.load(val);
-        var book = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0] + ' ' + new Date().Format('yyyy-MM-dd hh-mm-ss');
+        var date = new Date();
+        _this._bookInfo.time = date.getTime();
+        var bookName = $('h1').text().match(/^[\u4e00-\u9fa5]+/)[0];
+        var book = bookName + ' ' + date.Format('yyyy-MM-dd hh-mm-ss');
         _this._book = book;
+        _this._bookInfo.bookName = bookName;
         var $links = $('#chapters-list').find('a');
 
         var list = _this._list;
@@ -131,6 +142,7 @@ var Program = {
         progress = parseInt((_this._chapterNum - list.length) * 100 / _this._chapterNum);
 
       _this._snatchTxt(chapter.name, chapter.href, progress);
+      _this._bookInfo.endChapter = chapter.name;
       if(_this._makeStop) {
         list = [];
       }
@@ -141,7 +153,7 @@ var Program = {
         setTimeout(function() {
           console.log(_this._book + ' 下载完毕！');
           _this._appendTxt(_this._errorLog);
-          _this.callback && _this.callback(_this._book + '.txt');
+          _this.callback && _this.callback(_this._book + '.txt', _this._bookInfo);
         }, 2000);
       }
     } else {

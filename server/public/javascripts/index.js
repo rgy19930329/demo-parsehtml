@@ -31,10 +31,6 @@ var Page = {
 		    	alert('bookId不能为空');
 		    	return;
 		    }
-		    if(!startChapter) {
-		    	alert('startChapter不能为空');
-		    	return;
-		    }
 		    socket.emit('catch', {
 		    	id: bookId,
 		    	start: startChapter
