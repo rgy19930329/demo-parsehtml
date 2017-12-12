@@ -66,6 +66,7 @@ var Program = {
   _book: '', // 保存小说名
   _bookInfo: { // 用来做下载信息存储
     bookId: 0, // 书号
+    count: 0, // 字数
     bookName: '', // 书名
     endChapter: '', // 上次下载的最后一章章节名
     time: 0 // 下载时间戳
@@ -206,6 +207,7 @@ var Program = {
   },
   // 将章节写入文件
   _appendTxt: function(txt) {
+    this._bookInfo.count += txt.length;
     fs.appendFileSync(this._outputDir + this._book + '.txt', txt);
   },
   // 格式化时间
