@@ -1,5 +1,5 @@
 var path = require('path');
-var http = require('http');
+var https = require('https');
 var iconv = require('iconv-lite');
 var BufferHelper = require('bufferhelper');
 var fs = require('fs');
@@ -48,10 +48,10 @@ var Program = {
     _makeStop: false,
     // 下载配置项
     _option: {
-        base: 'http://www.boquge.com',
+        base: 'https://www.boquge.com',
         book: ''
     },
-    _bookId: null, // bookId
+    _bookId: null, // bookId 
     _startChapter: null, // 开始章节名
     _isOk: true, // 标志当前章节是否已下载成功
     _list: [], // 小说列表
@@ -74,7 +74,7 @@ var Program = {
     // 章节抓取入口
     _entry: function(bookListUrl, startChapterName) {
         var _this = this;
-        var req = http.request(bookListUrl, function(res) {
+        var req = https.request(bookListUrl, function(res) {
             //解决中文编码问题
             var bufferHelper = new BufferHelper();
             res.on('data', function(chunk) {
@@ -148,7 +148,7 @@ var Program = {
         _this.snatchCallback && _this.snatchCallback(chapterName, progress);
 
         var url = _this._option.base + bookUrl;
-        var req = http.request(url, function(res) {
+        var req = https.request(url, function(res) {
             //解决中文编码问题
             var bufferHelper = new BufferHelper();
             res.on('data', function(chunk) {
