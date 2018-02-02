@@ -1,5 +1,5 @@
 var os = require('os');
-var http = require('http');
+var http = require('https');
 var iconv = require('iconv-lite');
 var BufferHelper = require('bufferhelper');
 var fs = require('fs');

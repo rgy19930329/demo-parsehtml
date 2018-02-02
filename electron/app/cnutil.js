@@ -1,5 +1,5 @@
 const path = require('path');
-const http = require('http');
+const http = require('https');
 const iconv = require('iconv-lite');
 const BufferHelper = require('bufferhelper');
 const fs = require('fs');
@@ -55,7 +55,7 @@ var Program = {
   _makeStop: false,
   // 下载配置项
   _option: {
-    base: 'http://www.boquge.com',
+    base: 'https://www.boquge.com',
     book: ''
   },
   _bookId: null, // bookId
