@@ -9,7 +9,7 @@
   },
   "author": "ranguangyu",
   "devDependencies": {
-    "electron": "1.7.9",
+    "electron": ">=1.8.2-beta5",
     "electron-connect": "0.6.2",
     "gulp": "3.9.1",
     "gulp-less": "3.3.2"
