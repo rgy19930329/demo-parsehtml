@@ -169,7 +169,8 @@ var Program = {
     },
     // 将章节写入文件
     _appendTxt: function(txt) {
-        fs.appendFileSync(this._outputDir + '\\' + this._book + '.txt', txt);
+        let outputDir = path.resolve(this._outputDir, `${this._book}.txt`);
+        fs.appendFileSync(outputDir, txt);
     },
     // 格式化时间
     _dateFormat: function() {
