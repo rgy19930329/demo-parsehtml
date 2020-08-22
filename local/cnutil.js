@@ -46,11 +46,12 @@ var Program = {
         var options = {
             url: bookListUrl,
             headers: {
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
+                // 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
             }
         };
 
-        request(options).on('response', function (res) {
+        var req = request(options).on('response', function (res) {
             var chunks = [];
             res.on('data', function (chunk) {
                 chunks = chunks.concat(chunk);
@@ -131,11 +132,13 @@ var Program = {
         var options = {
             url,
             headers: {
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
-            }
+                // 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36',
+                'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'
+            },
+            timeout: 3000,
         };
 
-        request(options).on('response', function (res) {
+        var req = request(options).on('response', function (res) {
             var chunks = [];
             res.on('data', function (chunk) {
                 chunks = chunks.concat(chunk);
@@ -165,6 +168,13 @@ var Program = {
                     _this._snatchTxt(chapterName, bookUrl);
                 }
             });
+        });
+
+        req.on('error', function(e) {
+            console.log('Error=======: ' + e.message);
+            console.log(chapterName + '下载失败......');
+            console.log('----------网络连接异常，重新下载----------');
+            _this._snatchTxt(chapterName, bookUrl);
         });
     },
     // 将章节写入文件
